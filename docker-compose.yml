@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  java_app:
-    container_name: java_app
-    image: java_app:1.0.0
+  ainews_cron_job:
+    container_name: ainews_cron_job
+    image: ainews_cron_job:1.0.0
     build: .
     ports:
       - 8080:8080
@@ -17,6 +17,8 @@ services:
     platform: linux/x86_64
     container_name: java_db
     image: mysql:8.0.28
+    volumes:
+      - /home/mysql
     ports:
       - 5432:3306
     environment:

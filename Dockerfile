@@ -1,6 +1,6 @@
 FROM amazoncorretto:17
-COPY target/ainews-batch-process-0.0.1-SNAPSHOT.jar java-app.jar
-ENTRYPOINT ["java", "-jar", "java-app.jar"]
+COPY target/ainews-batch-process-0.0.1-SNAPSHOT.jar ainews-batch-process.jar
+ENTRYPOINT ["java", "-jar", "ainews-batch-process.jar"]
 #VOLUME /temp
 #EXPOSE 8080
 #ADD ./target/ainews-batch-process-0.0.1-SNAPSHOT.jar ainews-batch-process.jar
