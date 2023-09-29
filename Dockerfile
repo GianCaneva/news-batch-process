@@ -1,12 +1,18 @@
-FROM eclipse-temurin:17-jdk-jammy
+FROM amazoncorretto:17
+COPY target/ainews-batch-process-0.0.1-SNAPSHOT.jar java-app.jar
+ENTRYPOINT ["java", "-jar", "java-app.jar"]
+#VOLUME /temp
+#EXPOSE 8080
+#ADD ./target/ainews-batch-process-0.0.1-SNAPSHOT.jar ainews-batch-process.jar
+#CMD ["java", "-jar", "ainews-batch-process.jar"]
 
-WORKDIR /app
 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+#Comandos
+#docker build -t ainews-batch-process:1.0 . (el punto implica que el archivo esta a la altura del root donde estamos ejecutando el comando)
+#docker images (para ver las imagenes)
+#copio el id de la imagen y creo un contenedor. Mapeo el network (si se va a conectar a algun lado que sea al localhost) y los puertos
+#docker run --net=host -p 8080:8080 0c7d83ab05eb
 
-RUN ./mvnw dependency:resolve
-COPY src ./src
+#docker run -p 3306:3306 --name mysql1 -e MYSQL_ROOT_PASSWORD=password -d mysql --default-authentication-plugin=mysql_native_password -h 127.0.0.1
 
-EXPOSE 8080
-CMD ["./mvnw", "spring-boot:run"]
+

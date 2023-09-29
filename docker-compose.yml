@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  java_app:
+    container_name: java_app
+    image: java_app:1.0.0
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URL=jdbc:mysql://java_db:3306/unchained
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=password
+    depends_on:
+      - java_db
+  java_db:
+    platform: linux/x86_64
+    container_name: java_db
+    image: mysql:8.0.28
+    ports:
+      - 5432:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: unchained
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 100
+
+#docker-compose build java_app (si queremos que solo se buildee java)
+#docker images (para ver las imagenes)
+#docker-compose up (para descargar todas las imagenes que tengamos en docker compose y levanta las imagenes)
+#docker-compose up -d (para ejecutar en modo detach o background y no mostrar los logs)
+#docker-compose down (detiene y elimina los contenedores en lote, pero todavia deja las imagenes)
+#docker ps / docker ps -a (para verificar los contenedor)
+#docker image rm e2e f2a (se pone las primeras 3 letras del id y es para eliminar las imagenes)
