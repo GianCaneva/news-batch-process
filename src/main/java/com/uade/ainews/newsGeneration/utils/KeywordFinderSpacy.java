@@ -2,10 +2,8 @@ package com.uade.ainews.newsGeneration.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -88,9 +86,19 @@ public class KeywordFinderSpacy {
                 response.append(line);
             }
             br.close();
+            Gson gson = new Gson();
 
             String generatedText = response.toString();
-            List<String> cleanResponse = standardizeResponse(generatedText);
+            List<String> elementsAsList = gson.fromJson(generatedText, new TypeToken<List<String>>(){}.getType());
+            StringBuilder result = new StringBuilder();
+            for (String palabra : elementsAsList) {
+                if (result.length() > 0) {
+                    result.append(", ");
+                }
+                result.append(palabra);
+            }
+            String resultadoFinal = result.toString();
+            List<String> cleanResponse = standardizeResponse(resultadoFinal);
             System.out.println("Generated Text RAW: " + generatedText);
             if (cleanResponse.size() > 5) {
                 List<String> first5Elements = cleanResponse.subList(0, 5);
@@ -137,7 +145,6 @@ public class KeywordFinderSpacy {
         result.remove("");
         result.remove("|");
         return result;
-
     }
 
 
