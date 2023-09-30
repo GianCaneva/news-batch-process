@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class KeywordFinder {
+public class KeywordFinderOpenAI {
 
     public static List<String> getKeyWords(String message) {
         String apiKey = "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";

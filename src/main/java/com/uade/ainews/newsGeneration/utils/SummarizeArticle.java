@@ -35,7 +35,6 @@ public class SummarizeArticle {
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
         connection.setRequestProperty("Content-Type", "text/plain; charset=" + StandardCharsets.UTF_8);

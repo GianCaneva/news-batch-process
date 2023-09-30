@@ -6,7 +6,7 @@ import com.uade.ainews.newsGeneration.dto.SummarizedNews;
 import com.uade.ainews.newsGeneration.repository.NewsGenerationRepository;
 import com.uade.ainews.newsGeneration.repository.SummarizedNewsRepository;
 import com.uade.ainews.newsGeneration.utils.ComparisonAlgorithm;
-import com.uade.ainews.newsGeneration.utils.KeywordFinder;
+import com.uade.ainews.newsGeneration.utils.KeywordFinderOpenAI;
 import com.uade.ainews.newsGeneration.utils.SummarizeArticle;
 import com.uade.ainews.newsGeneration.utils.WebScrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class NewsGetterService {
                     //Scrapping. Get article and title from a URL
                     News newsWithInformationFromPagAndKeyWords = WebScrapper.getInformationFromPage(News.builder().url(currentRss.getUrl()).section(currentRss.getSection()).build());
                     //Get keywords
-                    List<String> keyWords = KeywordFinder.getKeyWords(newsWithInformationFromPagAndKeyWords.getArticle());
+                    List<String> keyWords = KeywordFinderOpenAI.getKeyWords(newsWithInformationFromPagAndKeyWords.getArticle());
                     newsWithInformationFromPagAndKeyWords.setKeywords(keyWords);
                     allNewsWithInfo.add(newsWithInformationFromPagAndKeyWords);
                 }
