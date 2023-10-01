@@ -21,7 +21,7 @@ public class SummarizedNews {
     private String section;
     @Column
     private String title;
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String rawArticle;
     @Column
     private String summary;

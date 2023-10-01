@@ -19,17 +19,15 @@ import java.util.Properties;
 
 public class KeywordFinderSpacy {
 
-    public static List<String>  getKeyWords(String message) {
+    public static List<String> getKeyWords(String message) throws Exception {
         String summary = "";
-
         try {
             String restUrl = "http://localhost:8081/api/keywords";
             return parseResponse(message, restUrl);
 
         } catch (Exception e) {
-            System.err.println("Error al enviar el texto: " + e.getMessage());
+            throw new Exception("Error getting keywords: " + message.substring(0, 50), e);
         }
-        return null;
     }
 
     public static String decodeUnicode(String input) {

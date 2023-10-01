@@ -11,18 +11,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
-public class SummarizeArticle {
+public class SummarizeTitle {
 
     public static String sumUp(String message, Integer maxTextExtension, Integer minTextExtension) {
         String summary = "";
         try {
-            String restUrl = "http://localhost:8081/api/receive";
+            String restUrl = "http://localhost:8081/api/summarize/title";
             String response = sendTextViaRest(message, maxTextExtension, minTextExtension, restUrl);
             String decodedResponse = decodeUnicode(response);
             summary = extractResponse(decodedResponse);
 
         } catch (Exception e) {
             System.err.println("Error al enviar el texto: " + e.getMessage());
+            summary = "?";
         }
         return summary;
     }

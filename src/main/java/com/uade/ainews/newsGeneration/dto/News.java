@@ -26,7 +26,7 @@ public class News {
     private String section;
     @Column
     private String title;
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String article;
     @Column
     private String merged;

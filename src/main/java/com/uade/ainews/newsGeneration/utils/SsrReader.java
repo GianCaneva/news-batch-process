@@ -1,5 +1,6 @@
 package com.uade.ainews.newsGeneration.utils;
 
+import com.uade.ainews.newsGeneration.dto.Rss;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,14 +12,18 @@ import java.util.List;
 
 public class SsrReader {
 
-    public static List<String> getAllLinks(String url) throws IOException {
-        Document document = Jsoup.connect(url).get();
-        //Article body
-        Elements allLinksRaw = document.select("link");
-        List<String> allLinks = new LinkedList<>();
-        for (Element singleLink : allLinksRaw) {
-            allLinks.add(singleLink.text());
+    public static List<Rss> getAllLinks(Rss aRssSource) throws Exception {
+        try {
+            Document document = Jsoup.connect(aRssSource.getUrl()).get();
+            //Article body
+            Elements allLinksRaw = document.select("link");
+            List<Rss> allLinks = new LinkedList<>();
+            for (Element singleLink : allLinksRaw) {
+                allLinks.add(Rss.builder().url(singleLink.text()).section(aRssSource.getSection()).build());
+            }
+            return allLinks;
+        } catch (Exception e){
+            throw new Exception("Error getting RSS sources from: " + aRssSource.getUrl() , e);
         }
-        return allLinks;
     }
 }

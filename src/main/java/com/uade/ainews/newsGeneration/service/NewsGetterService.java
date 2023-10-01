@@ -5,10 +5,7 @@ import com.uade.ainews.newsGeneration.dto.Rss;
 import com.uade.ainews.newsGeneration.dto.SummarizedNews;
 import com.uade.ainews.newsGeneration.repository.NewsGenerationRepository;
 import com.uade.ainews.newsGeneration.repository.SummarizedNewsRepository;
-import com.uade.ainews.newsGeneration.utils.ComparisonAlgorithm;
-import com.uade.ainews.newsGeneration.utils.KeywordFinderOpenAI;
-import com.uade.ainews.newsGeneration.utils.SummarizeArticle;
-import com.uade.ainews.newsGeneration.utils.WebScrapper;
+import com.uade.ainews.newsGeneration.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +19,7 @@ public class NewsGetterService {
     // CRON
 
     //Set up every url source with their sections
-    public static final String CLARIN_RSS_ULTIMO = "https://www.clarin.com/rss/lo-ultimo/";
+    public static final String CLARIN_RSS_ULTIMO = "https://www.clarin.com/rss/lo-ultimo/ERROR";
     public static final String PERFIL_RSS_ULTIMO = "https://www.perfil.com/feed";
     public static final String CLARIN_RSS_POLITICA = "https://www.clarin.com/rss/politica/";
     public static final String PERFIL_RSS_POLITICA = "https://www.perfil.com/feed/politica";
@@ -46,62 +43,104 @@ public class NewsGetterService {
 
     public void getSameNews() {
 
-        try {
-            List<Rss> allRSSLinks = new LinkedList<>();
-            loadLinks(allRSSLinks);
-            List<News> allNewsWithInfo = new LinkedList<>();
-            //todo modificar para que use todos los elementos de la lista y no solo 30
-            for (int i = 30; i < allRSSLinks.size(); i++) {
+        // Load RSS sources
+        System.out.println("Starting get source process.");
+        List<Rss> allSourceLinks = new LinkedList<>();
+        loadLinks(allSourceLinks);
+        List<Rss> allRSSLinks = new LinkedList<>();
+        for (int i = 0; i < allSourceLinks.size(); i++) {
+            try {
+                allRSSLinks.addAll(SsrReader.getAllLinks(allSourceLinks.get(i)));
+            } catch (Exception e) {
+                System.out.println("===Error=== " + e.getClass()
+                        + " Message: " + e.getMessage()
+                        + " Cause: " + e.getCause()
+                        + " Stacktrace:" + e.getStackTrace());
+            }
+        }
+
+        //Access all URLs news and process article/content (get content, generate title and identify keywords)
+        List<News> allNewsWithInfo = new LinkedList<>();
+        for (int i = 0; i < allRSSLinks.size(); i++) {
+            try {
                 Rss currentRss = allRSSLinks.get(i);
                 Optional<News> oneByUrl = newsGenerationRepository.findOneByUrl(currentRss.getUrl());
-                //En caso de que no haya ninguna URL igual en la base de datos, se procede al analisis
-                if (oneByUrl.isEmpty()) {
+                    /*
+                        En caso de que no existe esa URL en la base de datos, significa que nunca fue parte de una SummarizedNews
+                        y se procede al analisis.
+                        De otra forma, esa URL fue procesada previamente y por reglas de negocio, una URL no puede estar
+                        en mas de un resumen
+                     */
+                if (oneByUrl.isEmpty()) { //
                     //Scrapping. Get article and title from a URL
                     News newsWithInformationFromPagAndKeyWords = WebScrapper.getInformationFromPage(News.builder().url(currentRss.getUrl()).section(currentRss.getSection()).build());
-                    //Get keywords
-                    List<String> keyWords = KeywordFinderOpenAI.getKeyWords(newsWithInformationFromPagAndKeyWords.getArticle());
+                    //Get keywords from the article
+                    List<String> keyWords = KeywordFinderSpacy.getKeyWords(newsWithInformationFromPagAndKeyWords.getArticle());
                     newsWithInformationFromPagAndKeyWords.setKeywords(keyWords);
                     allNewsWithInfo.add(newsWithInformationFromPagAndKeyWords);
                 }
+            } catch (Exception e) {
+                System.out.println("===Error=== " + e.getClass()
+                        + " Message: " + e.getMessage()
+                        + " Cause: " + e.getCause()
+                        + " Stacktrace:" + e.getStackTrace());
             }
-            //Identify and match same news
-            List<List<News>> allSiblingNews = ComparisonAlgorithm.identifySameNews(allNewsWithInfo);
+        }
 
-            //Merge same articles onto a new one
-            for(int i = 0; i<allSiblingNews.size(); i++){
-                StringBuilder mergeSiblingTitles = new StringBuilder();
-                StringBuilder mergeSiblingArticles = new StringBuilder();
-                List<News> siblings = allSiblingNews.get(i);
-                for (int j = 0; j<siblings.size(); j++){
-                    mergeSiblingTitles.append(siblings.get(j).getTitle()).append(" ");
-                    mergeSiblingArticles.append(siblings.get(j).getArticle()).append(" ");
-                    //Almacena en la base de datos las noticias que se utilizaron para genear un AI articulo
+        //Identify and match same news
+        List<List<News>> allSiblingNews = ComparisonAlgorithm.identifySameNews(allNewsWithInfo);
+
+        //Merge same articles onto a new one
+        mergeSameNewsOntoNewArticle(allSiblingNews);
+    }
+
+    private void mergeSameNewsOntoNewArticle(List<List<News>> allSiblingNews) {
+        for (int i = 0; i < allSiblingNews.size(); i++) {
+            StringBuilder mergeSiblingTitles = new StringBuilder();
+            StringBuilder mergeSiblingArticles = new StringBuilder();
+            List<News> siblings = allSiblingNews.get(i);
+            for (int j = 0; j < siblings.size(); j++) {
+                mergeSiblingTitles.append(siblings.get(j).getTitle()).append(" ");
+                mergeSiblingArticles.append(siblings.get(j).getArticle()).append(" ");
+                //Almacena en la base de datos las noticias que se utilizaron para genear un AI articulo
+                try {
                     newsGenerationRepository.save(siblings.get(j));
+                } catch (Exception e) {
+                    System.out.println("===Error=== " + e.getClass()
+                            + " Message: " + e.getMessage()
+                            + " Cause: " + e.getCause()
+                            + " Stacktrace:" + e.getStackTrace());
                 }
-                String titleSummarized = SummarizeArticle.sumUp(String.valueOf(mergeSiblingTitles), TITLE_MAX_EXTENSION, TITLE_MIN_EXTENSION);
-                //Save on the db
-                summarizedNewsRepository.save(SummarizedNews.builder().title(titleSummarized).rawArticle(String.valueOf(mergeSiblingArticles)).releaseDate(LocalDateTime.now()).build());
             }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            try {
+                String titleSummarized = SummarizeTitle.sumUp(String.valueOf(mergeSiblingTitles), TITLE_MAX_EXTENSION, TITLE_MIN_EXTENSION);
+                titleSummarized += "...";
+                //Save merged all same news onto DB
+                summarizedNewsRepository.save(SummarizedNews.builder().title(titleSummarized).rawArticle(String.valueOf(mergeSiblingArticles)).releaseDate(LocalDateTime.now()).build());
+            } catch (Exception e) {
+                System.out.println("===Error=== " + e.getClass()
+                        + " Message: " + e.getMessage()
+                        + " Cause: " + e.getCause()
+                        + " Stacktrace:" + e.getStackTrace());
+            }
         }
     }
 
     private static void loadLinks(List<Rss> allRSSLinks) {
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ULTIMO).section("Last").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ULTIMO).section("Last").build());
-        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("Politics").build());
-        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("Politics").build());
-        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("Economy").build());
-        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("Economy").build());
-        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("Sports").build());
-        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("Sports").build());
-        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("Social").build());
-        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("Social").build());
-        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("International").build());
-        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_INTERNACIONAL).section("International").build());
-        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("Policy").build());
-        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("Policy").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("Politics").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("Politics").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("Economy").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("Economy").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("Sports").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("Sports").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("Social").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("Social").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("International").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_INTERNACIONAL).section("International").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("Policy").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("Policy").build());
     }
 
 }
