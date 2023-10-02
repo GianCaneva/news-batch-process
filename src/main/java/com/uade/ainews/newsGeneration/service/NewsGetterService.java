@@ -19,7 +19,7 @@ public class NewsGetterService {
     // CRON
 
     //Set up every url source with their sections
-    public static final String CLARIN_RSS_ULTIMO = "https://www.clarin.com/rss/lo-ultimo/ERROR";
+    public static final String CLARIN_RSS_ULTIMO = "https://www.clarin.com/rss/lo-ultimo/";
     public static final String PERFIL_RSS_ULTIMO = "https://www.perfil.com/feed";
     public static final String CLARIN_RSS_POLITICA = "https://www.clarin.com/rss/politica/";
     public static final String PERFIL_RSS_POLITICA = "https://www.perfil.com/feed/politica";
