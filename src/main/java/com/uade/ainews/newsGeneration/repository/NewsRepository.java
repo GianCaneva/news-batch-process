@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface NewsGenerationRepository  extends JpaRepository <News, Long>{
+public interface NewsRepository extends JpaRepository <News, Long>{
     Optional<News> findOneByUrl(String url);
 }
 

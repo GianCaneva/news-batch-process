@@ -24,7 +24,7 @@ public class News {
     private List<String> keywords;
     @Column
     private String section;
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String title;
     @Column(columnDefinition = "TEXT")
     private String article;

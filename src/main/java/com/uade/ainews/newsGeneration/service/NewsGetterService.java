@@ -3,7 +3,7 @@ package com.uade.ainews.newsGeneration.service;
 import com.uade.ainews.newsGeneration.dto.News;
 import com.uade.ainews.newsGeneration.dto.Rss;
 import com.uade.ainews.newsGeneration.dto.SummarizedNews;
-import com.uade.ainews.newsGeneration.repository.NewsGenerationRepository;
+import com.uade.ainews.newsGeneration.repository.NewsRepository;
 import com.uade.ainews.newsGeneration.repository.SummarizedNewsRepository;
 import com.uade.ainews.newsGeneration.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class NewsGetterService {
     @Autowired
     private SummarizedNewsRepository summarizedNewsRepository;
     @Autowired
-    private NewsGenerationRepository newsGenerationRepository;
+    private NewsRepository newsRepository;
 
     public void getSameNews() {
 
@@ -64,7 +64,7 @@ public class NewsGetterService {
         for (int i = 0; i < allRSSLinks.size(); i++) {
             try {
                 Rss currentRss = allRSSLinks.get(i);
-                Optional<News> oneByUrl = newsGenerationRepository.findOneByUrl(currentRss.getUrl());
+                Optional<News> oneByUrl = newsRepository.findOneByUrl(currentRss.getUrl());
                     /*
                         En caso de que no existe esa URL en la base de datos, significa que nunca fue parte de una SummarizedNews
                         y se procede al analisis.
@@ -73,7 +73,7 @@ public class NewsGetterService {
                      */
                 if (oneByUrl.isEmpty()) { //
                     //Scrapping. Get article and title from a URL
-                    News newsWithInformationFromPagAndKeyWords = WebScrapper.getInformationFromPage(News.builder().url(currentRss.getUrl()).section(currentRss.getSection()).build());
+                    News newsWithInformationFromPagAndKeyWords = WebScrapper.getInformationFromPage(News.builder().url(currentRss.getUrl()).section(currentRss.getSection()).releaseDate(LocalDateTime.now()).build());
                     //Get keywords from the article
                     List<String> keyWords = KeywordFinderSpacy.getKeyWords(newsWithInformationFromPagAndKeyWords.getArticle());
                     newsWithInformationFromPagAndKeyWords.setKeywords(keyWords);
@@ -94,17 +94,19 @@ public class NewsGetterService {
         mergeSameNewsOntoNewArticle(allSiblingNews);
     }
 
-    private void mergeSameNewsOntoNewArticle(List<List<News>> allSiblingNews) {
+    public void mergeSameNewsOntoNewArticle(List<List<News>> allSiblingNews) {
         for (int i = 0; i < allSiblingNews.size(); i++) {
             StringBuilder mergeSiblingTitles = new StringBuilder();
             StringBuilder mergeSiblingArticles = new StringBuilder();
             List<News> siblings = allSiblingNews.get(i);
+            String section = "section";
             for (int j = 0; j < siblings.size(); j++) {
+                section = siblings.get(j).getSection();
                 mergeSiblingTitles.append(siblings.get(j).getTitle()).append(" ");
                 mergeSiblingArticles.append(siblings.get(j).getArticle()).append(" ");
                 //Almacena en la base de datos las noticias que se utilizaron para genear un AI articulo
                 try {
-                    newsGenerationRepository.save(siblings.get(j));
+                    newsRepository.save(siblings.get(j));
                 } catch (Exception e) {
                     System.out.println("===Error=== " + e.getClass()
                             + " Message: " + e.getMessage()
@@ -116,7 +118,12 @@ public class NewsGetterService {
                 String titleSummarized = SummarizeTitle.sumUp(String.valueOf(mergeSiblingTitles), TITLE_MAX_EXTENSION, TITLE_MIN_EXTENSION);
                 titleSummarized += "...";
                 //Save merged all same news onto DB
-                summarizedNewsRepository.save(SummarizedNews.builder().title(titleSummarized).rawArticle(String.valueOf(mergeSiblingArticles)).releaseDate(LocalDateTime.now()).build());
+                summarizedNewsRepository.save(SummarizedNews.builder()
+                        .section(section)
+                        .title(titleSummarized)
+                        .rawArticle(String.valueOf(mergeSiblingArticles))
+                        .releaseDate(LocalDateTime.now())
+                        .build());
             } catch (Exception e) {
                 System.out.println("===Error=== " + e.getClass()
                         + " Message: " + e.getMessage()

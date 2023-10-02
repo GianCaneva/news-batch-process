@@ -1,8 +1,5 @@
 package com.uade.ainews.newsGeneration.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,8 +15,7 @@ public class SummarizeTitle {
         try {
             String restUrl = "http://localhost:8081/api/summarize/title";
             String response = sendTextViaRest(message, maxTextExtension, minTextExtension, restUrl);
-            String decodedResponse = decodeUnicode(response);
-            summary = extractResponse(decodedResponse);
+            summary = decodeUnicode(response);
 
         } catch (Exception e) {
             System.err.println("Error al enviar el texto: " + e.getMessage());
@@ -56,7 +52,8 @@ public class SummarizeTitle {
             while ((line = br.readLine()) != null) {
                 response.append(line);
             }
-            return response.toString();
+            br.close();
+            return response.toString().substring(1, response.length()-1); //delete extra ""
         }
     }
 
@@ -66,24 +63,6 @@ public class SummarizeTitle {
         return properties.getProperty("input");
     }
 
-    private static String extractResponse(String jsonResponse) {
-        String summaryText = "";
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(jsonResponse);
 
-            if (jsonNode.isArray() && jsonNode.size() > 0) {
-                JsonNode summaryNode = jsonNode.get(0).get("summary_text");
-                if (summaryNode != null) {
-                    summaryText = summaryNode.asText();
-                    System.out.println("Texto resumido: " + summaryText);
-                }
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error al parsear JSON: " + e.getMessage());
-        }
-        return summaryText;
-    }
 }
 
