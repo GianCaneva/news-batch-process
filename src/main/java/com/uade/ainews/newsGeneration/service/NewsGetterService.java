@@ -134,20 +134,20 @@ public class NewsGetterService {
     }
 
     private static void loadLinks(List<Rss> allRSSLinks) {
-        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ULTIMO).section("Last").build());
-        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ULTIMO).section("Last").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("Politics").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("Politics").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("Economy").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("Economy").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("Sports").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("Sports").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("Social").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("Social").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("International").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_INTERNACIONAL).section("International").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("Policy").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("Policy").build());
+        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ULTIMO).section("LAST").build());
+        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ULTIMO).section("LAST").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("POLITICS").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("POLITICS").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("ECONOMY").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("ECONOMY").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("SPORTS").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("SPORTS").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("SOCIAL").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("SOCIAL").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
+//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("POLICE").build());
+//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("POLICE").build());
     }
 
 }

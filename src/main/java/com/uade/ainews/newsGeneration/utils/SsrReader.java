@@ -19,11 +19,52 @@ public class SsrReader {
             Elements allLinksRaw = document.select("link");
             List<Rss> allLinks = new LinkedList<>();
             for (Element singleLink : allLinksRaw) {
-                allLinks.add(Rss.builder().url(singleLink.text()).section(aRssSource.getSection()).build());
+                String section = aRssSource.getSection();
+                if (section.equals("LAST")){
+                    section = extracSectionFromLast(section);
+                }
+                allLinks.add(Rss.builder().url(singleLink.text()).section(section).build());
             }
             return allLinks;
         } catch (Exception e){
             throw new Exception("Error getting RSS sources from: " + aRssSource.getUrl() , e);
         }
+    }
+
+    public static String extracSectionFromLast(String url) {
+        String newSection = "";
+        // Divide la URL en partes usando "/" como delimitador
+        String[] parts = url.split("/");
+
+        // Obtiene la última parte (que es lo que necesitas)
+        String section = parts[parts.length - 1];
+
+        switch (section){
+            case "politica":
+                newSection = "POLITICS";
+                break;
+            case "economia":
+                newSection = "ECONOMY";
+                break;
+            case "deportes":
+                newSection = "SPORTS";
+                break;
+            case "sociedad":
+                newSection = "SOCIAL";
+                break;
+            case "mundo":
+            case "internacionales":
+                newSection = "INTERNATIONAL";
+                break;
+            case "policiales" :
+            case "policia":
+                newSection = "POLICE";
+                break;
+            default:
+                newSection = "LAST";
+                break;
+        }
+
+        return newSection;
     }
 }
