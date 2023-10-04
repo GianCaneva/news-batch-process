@@ -50,7 +50,7 @@ public class NewsGetterService {
         List<Rss> allRSSLinks = new LinkedList<>();
         for (int i = 0; i < allSourceLinks.size(); i++) {
             try {
-                allRSSLinks.addAll(SsrReader.getAllLinks(allSourceLinks.get(i)));
+                allRSSLinks.addAll(RssReader.getAllLinks(allSourceLinks.get(i)));
             } catch (Exception e) {
                 System.out.println("===Error=== " + e.getClass()
                         + " Message: " + e.getMessage()

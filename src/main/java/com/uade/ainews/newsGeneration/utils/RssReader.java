@@ -6,11 +6,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SsrReader {
+public class RssReader {
 
     public static List<Rss> getAllLinks(Rss aRssSource) throws Exception {
         try {
