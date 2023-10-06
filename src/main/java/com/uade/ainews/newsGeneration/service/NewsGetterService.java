@@ -116,7 +116,6 @@ public class NewsGetterService {
             }
             try {
                 String titleSummarized = SummarizeTitle.sumUp(String.valueOf(mergeSiblingTitles), TITLE_MAX_EXTENSION, TITLE_MIN_EXTENSION);
-                titleSummarized += "...";
                 //Save merged all same news onto DB
                 summarizedNewsRepository.save(SummarizedNews.builder()
                         .section(section)
