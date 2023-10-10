@@ -20,7 +20,7 @@ public class RssReader {
             for (Element singleLink : allLinksRaw) {
                 String section = aRssSource.getSection();
                 if (section.equals("LAST")){
-                    section = extracSectionFromLast(section);
+                    section = extractSectionFromLast(singleLink.text());
                 }
                 allLinks.add(Rss.builder().url(singleLink.text()).section(section).build());
             }
@@ -30,7 +30,7 @@ public class RssReader {
         }
     }
 
-    public static String extracSectionFromLast(String url) {
+    public static String extractSectionFromLast(String url) {
         String newSection = "";
         // Divide la URL en partes usando "/" como delimitador
         String[] parts = url.split("/");
@@ -60,7 +60,7 @@ public class RssReader {
                 newSection = "POLICE";
                 break;
             default:
-                newSection = "LAST";
+                newSection = "OTHERS";
                 break;
         }
 
