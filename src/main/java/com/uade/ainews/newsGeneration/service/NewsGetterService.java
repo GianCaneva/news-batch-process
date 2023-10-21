@@ -16,9 +16,8 @@ import java.util.Optional;
 
 @Service
 public class NewsGetterService {
-    // CRON
 
-    //Set up every url source with their sections
+    // Set up every url source with their sections
     public static final String CLARIN_RSS_ULTIMO = "https://www.clarin.com/rss/lo-ultimo/";
     public static final String PERFIL_RSS_ULTIMO = "https://www.perfil.com/feed";
     public static final String CLARIN_RSS_POLITICA = "https://www.clarin.com/rss/politica/";
@@ -43,7 +42,7 @@ public class NewsGetterService {
 
     public void getSameNews() {
 
-        // Load RSS sources
+        // Load RSS sources from which the information will be extracted
         System.out.println("Starting get source process.");
         List<Rss> allSourceLinks = new LinkedList<>();
         loadLinks(allSourceLinks);
@@ -59,22 +58,23 @@ public class NewsGetterService {
             }
         }
 
-        //Access all URLs news and process article/content (get content, generate title and identify keywords)
+        // Access all URLs news and process article/content (get content, generate title and identify keywords)
         List<News> allNewsWithInfo = new LinkedList<>();
         for (int i = 0; i < allRSSLinks.size(); i++) {
             try {
                 Rss currentRss = allRSSLinks.get(i);
                 Optional<News> oneByUrl = newsRepository.findOneByUrl(currentRss.getUrl());
                     /*
-                        En caso de que no existe esa URL en la base de datos, significa que nunca fue parte de una SummarizedNews
-                        y se procede al analisis.
-                        De otra forma, esa URL fue procesada previamente y por reglas de negocio, una URL no puede estar
-                        en mas de un resumen
+                        In case that URL does not exist in the database, it means that it was never part of a
+                        SummarizedNews and the analysis proceeds.
+                         Otherwise, that URL was previously processed and by business rules,
+                         a URL cannot be in more than one summary.
                      */
                 if (oneByUrl.isEmpty()) { //
-                    //Scrapping. Get article and title from a URL
+                    // Get article and title from a URL -Scrapping process-.
                     News newsWithInformationFromPagAndKeyWords = WebScrapper.getInformationFromPage(News.builder().url(currentRss.getUrl()).section(currentRss.getSection()).releaseDate(LocalDateTime.now()).build());
-                    //Get keywords from the article
+
+                    // Get keywords from the article
                     List<String> keyWords = KeywordFinderSpacy.getKeyWords(newsWithInformationFromPagAndKeyWords.getArticle());
                     newsWithInformationFromPagAndKeyWords.setKeywords(keyWords);
                     allNewsWithInfo.add(newsWithInformationFromPagAndKeyWords);
@@ -87,13 +87,14 @@ public class NewsGetterService {
             }
         }
 
-        //Identify and match same news
+        // Identify and match multiple news that refers to the same event
         List<List<News>> allSiblingNews = ComparisonAlgorithm.identifySameNews(allNewsWithInfo);
 
-        //Merge same articles onto a new one
+        // Merge similar articles onto a new one
         mergeSameNewsOntoNewArticle(allSiblingNews);
     }
 
+    // Takes all news that have another similar news a creates a new one
     public void mergeSameNewsOntoNewArticle(List<List<News>> allSiblingNews) {
         for (int i = 0; i < allSiblingNews.size(); i++) {
             StringBuilder mergeSiblingTitles = new StringBuilder();
@@ -104,7 +105,7 @@ public class NewsGetterService {
                 section = siblings.get(j).getSection();
                 mergeSiblingTitles.append(siblings.get(j).getTitle()).append(" ");
                 mergeSiblingArticles.append(siblings.get(j).getArticle()).append(" ");
-                //Almacena en la base de datos las noticias que se utilizaron para genear un AI articulo
+                // Stores in the database the news that were used to generate an AI article.
                 try {
                     newsRepository.save(siblings.get(j));
                 } catch (Exception e) {
@@ -115,8 +116,9 @@ public class NewsGetterService {
                 }
             }
             try {
+                // Generate a summarized title using AI
                 String titleSummarized = SummarizeTitle.sumUp(String.valueOf(mergeSiblingTitles), TITLE_MAX_EXTENSION, TITLE_MIN_EXTENSION);
-                //Save merged all same news onto DB
+                // Save merged all same news onto DB
                 summarizedNewsRepository.save(SummarizedNews.builder()
                         .section(section)
                         .title(titleSummarized)
@@ -132,21 +134,22 @@ public class NewsGetterService {
         }
     }
 
+    // Map each RSS URL with a specific section
     private static void loadLinks(List<Rss> allRSSLinks) {
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ULTIMO).section("LAST").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ULTIMO).section("LAST").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("POLITICS").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("POLITICS").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("ECONOMY").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("ECONOMY").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("SPORTS").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("SPORTS").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("SOCIAL").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("SOCIAL").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
-//        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("POLICE").build());
-//        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("POLICE").build());
+        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("POLITICS").build());
+        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("POLITICS").build());
+        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("ECONOMY").build());
+        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("ECONOMY").build());
+        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("SPORTS").build());
+        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("SPORTS").build());
+        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("SOCIAL").build());
+        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("SOCIAL").build());
+        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
+        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
+        allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("POLICE").build());
+        allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("POLICE").build());
     }
 
 }

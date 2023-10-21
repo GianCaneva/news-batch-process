@@ -7,7 +7,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 public class RssReaderTest extends TestCase {
 

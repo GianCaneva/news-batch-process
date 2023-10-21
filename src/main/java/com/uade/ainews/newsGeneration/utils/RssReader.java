@@ -11,34 +11,36 @@ import java.util.List;
 
 public class RssReader {
 
+    // Given a RSS URL, extract news url
     public static List<Rss> getAllLinks(Rss aRssSource) throws Exception {
         try {
             Document document = Jsoup.connect(aRssSource.getUrl()).get();
-            //Article body
+            // Article body
             Elements allLinksRaw = document.select("link");
             List<Rss> allLinks = new LinkedList<>();
             for (Element singleLink : allLinksRaw) {
                 String section = aRssSource.getSection();
-                if (section.equals("LAST")){
+                if (section.equals("LAST")) {
                     section = extractSectionFromLast(singleLink.text());
                 }
                 allLinks.add(Rss.builder().url(singleLink.text()).section(section).build());
             }
             return allLinks;
-        } catch (Exception e){
-            throw new Exception("Error getting RSS sources from: " + aRssSource.getUrl() , e);
+        } catch (Exception e) {
+            throw new Exception("Error getting RSS sources from: " + aRssSource.getUrl(), e);
         }
     }
 
+    // If the URL comes from LAST section, this method will be executed to assign it a specific.
     public static String extractSectionFromLast(String url) {
         String newSection = "";
-        // Divide la URL en partes usando "/" como delimitador
+        // Splits the URL into parts using "/" as delimiter
         String[] parts = url.split("/");
 
-        // Obtiene la última parte (que es lo que necesitas)
+        // Gets the last part (which is what it needs)
         String section = parts[parts.length - 1];
 
-        switch (section){
+        switch (section) {
             case "politica":
                 newSection = "POLITICS";
                 break;
@@ -55,7 +57,7 @@ public class RssReader {
             case "internacionales":
                 newSection = "INTERNATIONAL";
                 break;
-            case "policiales" :
+            case "policiales":
             case "policia":
                 newSection = "POLICE";
                 break;

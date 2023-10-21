@@ -1,19 +1,18 @@
 package com.uade.ainews.newsGeneration.utils;
+
 import com.uade.ainews.newsGeneration.dto.News;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-
 public class WebScrapper {
 
     public static News getInformationFromPage(News news) throws Exception {
 
-        if (news.getUrl().substring(0, 22).contains("clarin")){
+        if (news.getUrl().substring(0, 22).contains("clarin")) {
             return scrapperClarin(news);
-        } else{
+        } else {
             return scrapperPerfil(news);
         }
 
@@ -21,7 +20,7 @@ public class WebScrapper {
 
 
     private static News scrapperClarin(News news) throws Exception {
-        try{
+        try {
             Document document = Jsoup.connect(news.getUrl()).get();
             //Title
             Elements headline = document.select("h1");
@@ -41,14 +40,14 @@ public class WebScrapper {
             news.setTitle(title);
             news.setArticle(article);
             return news;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Error reading article from CLARIN: " + news.getUrl(), e);
         }
 
     }
 
     private static News scrapperPerfil(News news) throws Exception {
-        try{
+        try {
             Document document = Jsoup.connect(news.getUrl()).get();
             //Title
             Elements headline = document.select("h1");
@@ -64,7 +63,7 @@ public class WebScrapper {
             news.setTitle(title);
             news.setArticle(article);
             return news;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Error reading article from PERFIL: " + news.getUrl(), e);
         }
     }

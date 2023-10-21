@@ -14,5 +14,4 @@ public class Rss {
     private String section;
 
 
-
 }

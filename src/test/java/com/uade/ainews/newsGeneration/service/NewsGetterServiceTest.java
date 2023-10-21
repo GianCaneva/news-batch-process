@@ -6,7 +6,6 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -18,6 +17,7 @@ public class NewsGetterServiceTest extends TestCase {
 
     @Autowired
     NewsGetterService newsGetterService;
+
     @Test
     public void givenMultiplesNewsThereAreNotSimilarOnes() {
         List<List<News>> allSiblingNews = new LinkedList<>();
@@ -42,8 +42,6 @@ public class NewsGetterServiceTest extends TestCase {
         newsGetterService.mergeSameNewsOntoNewArticle(allSiblingNews);
 
     }
-
-
 
 
 }
