@@ -43,7 +43,7 @@ Alternativamente, puede ejecutar el método principal en Main.java en su IDE ele
 
 * Si bien el sistema para ser ejecutado a través de un CRON JOB esta implementado y funcionado. Se decidió desactivar temporalmente con el fin de realizar el testeo de una forma más controlada.
 * Adicionalmente, se puede ejecutar los dos servicios REST que han sido creados.
-  * `/batch/news/collectSources` : para inciar el proceso de búsqueda, procesamiento y carga de noticias en la base de datos.
+  * `/batch/news/collectSources` : para iniciar el proceso de búsqueda, procesamiento y carga de noticias en la base de datos.
   * `/batch/news/reduceInterest` : para reducir el interés de todos los usuarios en todas las secciones.
 
 ## Cloud
