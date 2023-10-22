@@ -38,7 +38,7 @@ public class NewsGetterController {
     }
 
     // Endpoint to test the connection
-    @GetMapping("/test")
+    @GetMapping("/healthcheck")
     public ResponseEntity<Object> login() {
         try {
             return ResponseEntity.ok("Application Up.");
