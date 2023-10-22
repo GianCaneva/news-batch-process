@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class SummarizeTitle {
 
-    // Call Python service to sum um
+    // Call Python service to sum up
     public static String sumUp(String message, Integer maxTextExtension, Integer minTextExtension) {
         String summary = "";
         try {

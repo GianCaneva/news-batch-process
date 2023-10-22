@@ -19,7 +19,7 @@ import java.util.Properties;
 
 public class KeywordFinderSpacy {
 
-    // Process to detect and extract keywords from an article using OPEN AI. Calling Python external service
+    // Process to detect and extract keywords from an article using OPEN AI. Call Python external service
     public static List<String> getKeyWords(String message) throws Exception {
         try {
             String restUrl = "http://localhost:8081/api/keywords";
