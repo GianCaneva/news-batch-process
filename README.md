@@ -48,10 +48,12 @@ Alternativamente, puede ejecutar el método principal en Main.java en su IDE ele
 
 ## Cloud
 
-El presente servicio se encuentra desplegado en un servicio cloud de Google (Google Cloud), el cual se puede acceder a través del siguiente link.
+El presente servicio se encuentra desplegado en un servicio cloud de Google (Google Cloud Platform), el cual se puede acceder a través del siguiente link.
 
 `https://batch-app-dot-unchainednews.rj.r.appspot.com/`
 
+Se puede consultar el estado de la aplicación consultando la dirección
+`/batch/news/healthcheck`
 
 ## Autores
 Caneva, Gianfranco

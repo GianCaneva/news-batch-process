@@ -27,6 +27,7 @@ public class NewsGetterController {
     @PostMapping("/collectSources")
     public ResponseEntity<String> executeNews() {
         newsGetterService.getSameNews();
+        System.out.println("COLLECT NEWS PROCESS EXECUTED SUCCESSFULLY.");
         return ResponseEntity.status(HttpStatus.OK).body("News batch executed successfully");
     }
 
@@ -41,7 +42,7 @@ public class NewsGetterController {
     @GetMapping("/healthcheck")
     public ResponseEntity<Object> login() {
         try {
-            return ResponseEntity.ok("Application Up.");
+            return ResponseEntity.ok("Unchained News application (batch) is up on Google Cloud Platform successfully.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

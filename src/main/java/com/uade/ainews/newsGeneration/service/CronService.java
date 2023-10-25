@@ -1,6 +1,7 @@
 package com.uade.ainews.newsGeneration.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,7 +16,7 @@ public class CronService {
 
     // Cron execution is currently disallowed. Execution is controlled by endpoints
     //@Scheduled (cron = "@weekly")
-    //@Scheduled (cron = "@hourly")
+    //@Scheduled(cron = "@hourly")
     public void cronTest() {
         newsGetterService.getSameNews();
         userService.reduceUserInterest();

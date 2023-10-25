@@ -63,6 +63,8 @@ public class NewsGetterService {
         for (int i = 0; i < allRSSLinks.size(); i++) {
             try {
                 Rss currentRss = allRSSLinks.get(i);
+                System.out.println("/////////////////////// Start process ///////////////////////////");
+                System.out.println("Execute analysis for: " + currentRss.getUrl());
                 Optional<News> oneByUrl = newsRepository.findOneByUrl(currentRss.getUrl());
                     /*
                         In case that URL does not exist in the database, it means that it was never part of a
@@ -79,6 +81,7 @@ public class NewsGetterService {
                     newsWithInformationFromPagAndKeyWords.setKeywords(keyWords);
                     allNewsWithInfo.add(newsWithInformationFromPagAndKeyWords);
                 }
+                System.out.println("----------------------- End process -----------------------");
             } catch (Exception e) {
                 System.out.println("===Error=== " + e.getClass()
                         + " Message: " + e.getMessage()
@@ -88,6 +91,7 @@ public class NewsGetterService {
         }
 
         // Identify and match multiple news that refers to the same event
+        System.out.println("Start comparison algorithm process.");
         List<List<News>> allSiblingNews = ComparisonAlgorithm.identifySameNews(allNewsWithInfo);
 
         // Merge similar articles onto a new one
@@ -96,6 +100,7 @@ public class NewsGetterService {
 
     // Takes all news that have another similar news a creates a new one
     public void mergeSameNewsOntoNewArticle(List<List<News>> allSiblingNews) {
+        System.out.println("Merging same news.");
         for (int i = 0; i < allSiblingNews.size(); i++) {
             StringBuilder mergeSiblingTitles = new StringBuilder();
             StringBuilder mergeSiblingArticles = new StringBuilder();
@@ -119,6 +124,7 @@ public class NewsGetterService {
                 // Generate a summarized title using AI
                 String titleSummarized = SummarizeTitle.sumUp(String.valueOf(mergeSiblingTitles), TITLE_MAX_EXTENSION, TITLE_MIN_EXTENSION);
                 // Save merged all same news onto DB
+                System.out.println("Saving element on DB");
                 summarizedNewsRepository.save(SummarizedNews.builder()
                         .section(section)
                         .title(titleSummarized)
@@ -136,20 +142,25 @@ public class NewsGetterService {
 
     // Map each RSS URL with a specific section
     private static void loadLinks(List<Rss> allRSSLinks) {
+        /*
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ULTIMO).section("LAST").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ULTIMO).section("LAST").build());
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("POLITICS").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("POLITICS").build());
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("ECONOMY").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("ECONOMY").build());
+        */
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("SPORTS").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("SPORTS").build());
+        /*
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("SOCIAL").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("SOCIAL").build());
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("POLICE").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("POLICE").build());
+
+         */
     }
 
 }

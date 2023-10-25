@@ -21,6 +21,7 @@ public class WebScrapper {
 
     private static News scrapperClarin(News news) throws Exception {
         try {
+            System.out.println("Clarin scrapper started");
             Document document = Jsoup.connect(news.getUrl()).get();
             //Title
             Elements headline = document.select("h1");
@@ -36,9 +37,9 @@ public class WebScrapper {
             for (Element partOfBody : body) {
                 article.append(partOfBody.text());
             }
-            System.out.println("Article: " + article);
             news.setTitle(title);
             news.setArticle(article);
+            System.out.println("Clarin scrapper completed");
             return news;
         } catch (Exception e) {
             throw new Exception("Error reading article from CLARIN: " + news.getUrl(), e);
@@ -48,6 +49,7 @@ public class WebScrapper {
 
     private static News scrapperPerfil(News news) throws Exception {
         try {
+            System.out.println("Perfil scrapper started");
             Document document = Jsoup.connect(news.getUrl()).get();
             //Title
             Elements headline = document.select("h1");
@@ -62,6 +64,7 @@ public class WebScrapper {
 
             news.setTitle(title);
             news.setArticle(article);
+            System.out.println("Perfil scrapper completed");
             return news;
         } catch (Exception e) {
             throw new Exception("Error reading article from PERFIL: " + news.getUrl(), e);
