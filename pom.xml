@@ -11,8 +11,9 @@
     <groupId>com.uade</groupId>
     <artifactId>ainews-batch-process</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>ainews-batch-process</name>
-    <description>Final project</description>
+    <description>Responsible for updating news</description>
     <properties>
         <java.version>17</java.version>
     </properties>

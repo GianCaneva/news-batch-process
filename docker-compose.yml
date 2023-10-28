@@ -30,7 +30,8 @@ services:
       timeout: 2s
       retries: 100
 
-#docker-compose build java_app (si queremos que solo se buildee java)
+
+#docker-compose build ainews_cron_job (si queremos que solo se buildee java)
 #docker images (para ver las imagenes)
 #docker-compose up (para descargar todas las imagenes que tengamos en docker compose y levanta las imagenes)
 #docker-compose up -d (para ejecutar en modo detach o background y no mostrar los logs)

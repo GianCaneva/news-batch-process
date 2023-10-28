@@ -2,7 +2,7 @@ package com.uade.ainews.newsGeneration.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -19,8 +19,8 @@ import java.util.Properties;
 
 public class KeywordFinderSpacy {
 
+    // Process to detect and extract keywords from an article using OPEN AI. Call Python external service
     public static List<String> getKeyWords(String message) throws Exception {
-        String summary = "";
         try {
             String restUrl = "http://localhost:8081/api/keywords";
             return parseResponse(message, restUrl);
@@ -55,11 +55,11 @@ public class KeywordFinderSpacy {
         }
         return summaryText;
     }
+
     public static List<String> parseResponse(String text, String restUrl) throws IOException {
 
-        // Construir la URL con el parámetro textExtension
-        String urlWithParams = restUrl;
-        URL url = new URL(urlWithParams);
+        // Build URL with textExtension attribute
+        URL url = new URL(restUrl);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -87,7 +87,8 @@ public class KeywordFinderSpacy {
             Gson gson = new Gson();
 
             String generatedText = response.toString();
-            List<String> elementsAsList = gson.fromJson(generatedText, new TypeToken<List<String>>(){}.getType());
+            List<String> elementsAsList = gson.fromJson(generatedText, new TypeToken<List<String>>() {
+            }.getType());
             StringBuilder result = new StringBuilder();
             for (String palabra : elementsAsList) {
                 if (result.length() > 0) {
@@ -99,8 +100,7 @@ public class KeywordFinderSpacy {
             List<String> cleanResponse = standardizeResponse(resultadoFinal);
             System.out.println("Generated Text RAW: " + generatedText);
             if (cleanResponse.size() > 5) {
-                List<String> first5Elements = cleanResponse.subList(0, 5);
-                cleanResponse = first5Elements;
+                cleanResponse = cleanResponse.subList(0, 5);
             }
             System.out.println("Generated Text SHORT: " + cleanResponse);
             connection.disconnect();
@@ -112,8 +112,11 @@ public class KeywordFinderSpacy {
     }
 
 
+    // Takes the raw keywords as a parameter and standardises them so that the format is the same for all.
     public static List<String> standardizeResponse(String responseRaw) {
+        // Deletes extra blank spaces
         String responseWithoutSpaces = responseRaw.trim();
+        // Formatting
         String commaGranted = responseWithoutSpaces.replace(" ", ",");
         String removeDots = commaGranted.replace(".", "");
         String removeEnters = removeDots.replace("\n\n", ",");
@@ -122,8 +125,9 @@ public class KeywordFinderSpacy {
         List<String> result = new ArrayList<>();
 
         for (String element : elements) {
+            // Capitalise all letters
             String upperCaseElement = element.toUpperCase();
-
+            // Deleting accents
             String replaceLetterA = upperCaseElement.replace("Á", "A");
             String replaceLetterE = replaceLetterA.replace("É", "E");
             String replaceLetterI = replaceLetterE.replace("Í", "I");
@@ -133,7 +137,7 @@ public class KeywordFinderSpacy {
             String trimmedElement = replaceLetterU.trim();
             result.add(trimmedElement);
         }
-        //REMOVING PREOPSICIONES
+        //Removing Prepositions in Spanish
         result.remove("DE");
         result.remove("DEL");
         result.remove("LA");

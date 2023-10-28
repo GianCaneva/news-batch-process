@@ -8,8 +8,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+
 public class SummarizeTitle {
 
+    // Call Python service to sum up
     public static String sumUp(String message, Integer maxTextExtension, Integer minTextExtension) {
         String summary = "";
         try {
@@ -26,7 +28,7 @@ public class SummarizeTitle {
 
 
     public static String sendTextViaRest(String text, Integer maxTextExtension, Integer minTextExtension, String restUrl) throws IOException {
-        // Construir la URL con el parámetro textExtension
+        // Build URL with textExtension parameter
         String urlWithParams = restUrl + "?maxTextExtension=" + maxTextExtension + "&minTextExtension=" + minTextExtension;
         URL url = new URL(urlWithParams);
 
@@ -53,7 +55,7 @@ public class SummarizeTitle {
                 response.append(line);
             }
             br.close();
-            return response.toString().substring(1, response.length()-1); //delete extra ""
+            return response.toString().substring(1, response.length() - 1); //delete extra ""
         }
     }
 

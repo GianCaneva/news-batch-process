@@ -16,10 +16,13 @@ import java.util.Collections;
 import java.util.List;
 
 
+@Deprecated
 public class KeywordFinderOpenAI {
 
+    // Process to detect and extract keywords from an article using OPEN AI.
+    // Deprecated. Replaced by KeywordFinderSpacy
     public static List<String> getKeyWords(String message) {
-        String apiKey = "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";
+        String apiKey = "97sk-POrt7wXZwQfOZVleIHGYT3BlbkFJToIu3kvxvNiDlxBDqtmb"; //Invalid
 
         try {
             URL url = new URL("https://api.openai.com/v1/engines/text-davinci-003/completions");
@@ -30,7 +33,7 @@ public class KeywordFinderOpenAI {
             connection.setDoOutput(true);
 
             String messageWithoutQuotes = message.replace("\"", "");
-            String prompt = "Devolver sin numerar y separado por comas,las 5 palabras claves mas importantes de esta noticia: " + messageWithoutQuotes ;
+            String prompt = "Devolver sin numerar y separado por comas,las 5 palabras claves mas importantes de esta noticia: " + messageWithoutQuotes;
             String data = "{\"prompt\": \"" + prompt + "\", \"max_tokens\": 100}";
 
             try (OutputStream os = connection.getOutputStream()) {
@@ -54,9 +57,8 @@ public class KeywordFinderOpenAI {
                 connection.disconnect();
                 List<String> cleanResponse = standardizeResponse(generatedText);
                 System.out.println("Generated Text RAW: " + generatedText);
-                if (cleanResponse.size()>5){
-                    List<String> first5Elements = cleanResponse.subList(0, 5);
-                    cleanResponse = first5Elements;
+                if (cleanResponse.size() > 5) {
+                    cleanResponse  = cleanResponse.subList(0, 5);
                 }
                 System.out.println("Generated Text SHORT: " + cleanResponse);
                 return cleanResponse;
@@ -71,6 +73,7 @@ public class KeywordFinderOpenAI {
         }
         return Collections.emptyList();
     }
+
     private static String extractGeneratedTextFromJson(String jsonResponse) {
         JsonParser jsonParser = new JsonParser();
         JsonObject jsonObject = jsonParser.parse(jsonResponse).getAsJsonObject();
@@ -92,7 +95,7 @@ public class KeywordFinderOpenAI {
         String responseWithoutSpaces = responseRaw.trim();
         String commaGranted = responseWithoutSpaces.replace(" ", ",");
         String removeDots = commaGranted.replace(".", "");
-        String removeEnters = removeDots.replace("\n\n",",");
+        String removeEnters = removeDots.replace("\n\n", ",");
         String removeDobleComma = removeEnters.replace(",,", ",");
         String[] elements = removeDobleComma.split(",");
         List<String> result = new ArrayList<>();
@@ -109,7 +112,7 @@ public class KeywordFinderOpenAI {
             String trimmedElement = replaceLetterU.trim();
             result.add(trimmedElement);
         }
-        //REMOVING PREOPSICIONES
+        //REMOVING Prepositions
         result.remove("DE");
         result.remove("DEL");
         result.remove("LA");
@@ -121,7 +124,6 @@ public class KeywordFinderOpenAI {
         return result;
 
     }
-
 
 
 }
