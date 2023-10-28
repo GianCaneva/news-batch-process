@@ -112,7 +112,7 @@ public class KeywordFinderOpenAI {
             String trimmedElement = replaceLetterU.trim();
             result.add(trimmedElement);
         }
-        //REMOVING PREOPSICIONES
+        //REMOVING Prepositions
         result.remove("DE");
         result.remove("DEL");
         result.remove("LA");

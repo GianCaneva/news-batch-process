@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class UserService {
 
-    public static final int DECREMENT_VALUE = 10;
+    public static final int DECREMENT_VALUE = 15;
     public static final int MIN_INTEREST_VALUE = 20;
     @Autowired
     private UserRepository userRepository;

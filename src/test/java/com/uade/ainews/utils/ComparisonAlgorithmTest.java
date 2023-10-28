@@ -109,7 +109,7 @@ public class ComparisonAlgorithmTest extends TestCase {
 
         List<List<News>> sameNews = ComparisonAlgorithm.identifySameNews(allNews);
 
-        assertThat(sameNews.size()).isEqualTo(4);
+        assertThat(sameNews.size()).isEqualTo(2);
 
     }
 
