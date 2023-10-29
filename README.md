@@ -37,7 +37,9 @@ Agregar el proyecto al scope de la librería de Maven, para asegurarse para inst
 ```bash
 mvn spring-boot:run
 ```
-Alternativamente, puede ejecutar el método principal en Main.java en su IDE elegido, por ejemplo: IntelliJ.
+Alternativamente, puede ejecutar el método principal en Main.java de su IDE elegido, por ejemplo: IntelliJ.
+
+Dicho esto, la aplicación quedará inicializada en el servidor local (probablemente en el puerto 8080) lista para su uso.
 
 ## Uso
 
