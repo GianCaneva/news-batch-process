@@ -15,7 +15,7 @@ class WebScrapperTest {
         News informationFromPage = WebScrapper.getInformationFromPage(news);
         assertEquals(informationFromPage.getUrl(), "https://www.perfil.com/noticias/bloomberg/bc-radicalismo-de-milei-no-es-lo-que-argentina-necesita.phtml");
         assertEquals(informationFromPage.getTitle(), "El radicalismo de Milei no es lo que la Argentina necesita");
-        assertEquals(informationFromPage.getArticle().substring(0, 50), "El inesperado éxito de Javier Milei en las eleccio");
+        assertEquals(informationFromPage.getArticle().substring(0, 50), "El libertario, entre otras propuestas, propone eli");
     }
 
     @Test
@@ -24,6 +24,6 @@ class WebScrapperTest {
         News informationFromPage = WebScrapper.getInformationFromPage(news);
         assertEquals(informationFromPage.getUrl(), "https://www.clarin.com/economia/siguen-largas-filas-estaciones-servicio-cargar-nafta-gobierno-atribuye-psicosis_0_M9NfwNZoFo.html");
         assertEquals(informationFromPage.getTitle(), "Siguen las largas filas en las estaciones de servicio para cargar nafta y el Gobierno lo atribuye a una \"psicosis\"");
-        assertEquals(informationFromPage.getArticle().substring(0, 50), "Por trabas para importar combustibles, falta nafta");
+        assertEquals(informationFromPage.getArticle().substring(0, 50), "Este sábado a la mañana se repetía la misma postal");
     }
 }
