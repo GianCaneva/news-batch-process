@@ -32,7 +32,7 @@ Esto generará un archivo jar (con todas las dependencias) que se ejecutará una
 
 ## Ejecución
 
-En una terminal, ejecute el método principal en Main.java mediante el siguiente comando (asegúrese de estar en la carpeta raíz del proyecto).
+Agregar el proyecto al scope de la librería de Maven, para asegurarse para instalar las dependencias necesarias mediante el comando a continuación.
 
 ```bash
 mvn spring-boot:run
