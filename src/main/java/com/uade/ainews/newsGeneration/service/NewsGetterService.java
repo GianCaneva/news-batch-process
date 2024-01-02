@@ -142,17 +142,17 @@ public class NewsGetterService {
 
     // Map each RSS URL with a specific section
     private static void loadLinks(List<Rss> allRSSLinks) {
-        /*
+
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ULTIMO).section("LAST").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ULTIMO).section("LAST").build());
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLITICA).section("POLITICS").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLITICA).section("POLITICS").build());
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_ECONOMIA).section("ECONOMY").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_ECONOMIA).section("ECONOMY").build());
-        */
+
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_DEPORTES).section("SPORTS").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_DEPORTES).section("SPORTS").build());
-        /*
+
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_SOCIALES).section("SOCIAL").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_SOCIALES).section("SOCIAL").build());
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_INTERNACIONAL).section("INTERNATIONAL").build());
@@ -160,7 +160,7 @@ public class NewsGetterService {
         allRSSLinks.add(Rss.builder().url(CLARIN_RSS_POLICIALES).section("POLICE").build());
         allRSSLinks.add(Rss.builder().url(PERFIL_RSS_POLICIALES).section("POLICE").build());
 
-         */
+
     }
 
 }
